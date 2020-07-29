@@ -9,52 +9,10 @@
         {
           "name": "Entalon Core Boards",
           "architecture": "samd",
-          "version": "0.1.0",
+          "version": "0.0.1",
           "category": "Contributed",
-          "url": "https://github.com/Entalon/EntalonCore/raw/master/archives/EntalonCore-0.1.0.zip",
-          "archiveFileName": "EntalonCore-0.1.0.zip",
-          "checksum": "SHA-256:946a23d7618e19253eb4dc7a2f74405610516a934c9d93d305b7da59133be354",
-          "size": "1896153",
-          "boards": [
-            {
-              "name": "Entalon Core A M4 (SAMD51)"
-            }
-          ],
-          "toolsDependencies": [
-            {
-              "packager": "arduino",
-              "name": "arm-none-eabi-gcc",
-              "version": "7-2017q4"
-            },
-            {
-              "packager": "arduino",
-              "name": "bossac",
-              "version": "1.8.0-48-gb176eee"
-            },
-            {
-              "packager": "arduino",
-              "name": "openocd",
-              "version": "0.10.0-arduino9"
-            },
-            {
-              "packager": "arduino",
-              "name": "CMSIS",
-              "version": "4.5.0"
-            },
-            {
-              "packager": "arduino",
-              "name": "CMSIS-Atmel",
-              "version": "1.2.0"
-            }
-          ]
-        },
-        {
-          "name": "Entalon Core Boards",
-          "architecture": "samd",
-          "version": "0.1.1",
-          "category": "Contributed",
-          "url": "https://github.com/Entalon/EntalonCore/raw/master/archives/EntalonCore-0.1.1.zip",
-          "archiveFileName": "EntalonCore-0.1.1.zip",
+          "url": "https://github.com/Entalon/EntalonCore/raw/master/archives/EntalonCore-0.0.1.zip",
+          "archiveFileName": "EntalonCore-0.0.1.zip",
           "checksum": "SHA-256:946a23d7618e19253eb4dc7a2f74405610516a934c9d93d305b7da59133be354",
           "size": "1896153",
           "boards": [

@@ -4,11 +4,12 @@ import json
 import os
 import shutil
 import hashlib
+import re
 
 package_file = 'package_entalon_index.json'
 
 def main():
-    dir_versions = next(os.walk('./versions/'))[1]
+
     published_versions = []
 
     with open(package_file) as json_file:
@@ -19,24 +20,48 @@ def main():
 
     unpublished_versions = False
 
-    for d in dir_versions:
-        if not check_version_published(d, published_versions):
-            unpublished_versions = True
-            resp = input(F'Publish \'{d}\'? (Y/n) ''')
-            if resp is not 'n':
-                output_filename = F'./archives/EntalonCore-{d}'
-                dir_name = F'./versions/{d}/'
-                shutil.make_archive(output_filename, 'zip', dir_name)
-                size = os.path.getsize(output_filename+'.zip')
-                sha256_hash = hashlib.sha256()
-                with open(output_filename+'.zip', "rb") as f:
-                    # Read and update hash string value in blocks of 4K
-                    for byte_block in iter(lambda: f.read(4096), b""):
-                        sha256_hash.update(byte_block)
-                    checksum = 'SHA-256:' + sha256_hash.hexdigest()
-                data['packages'][0]['platforms'].append(
-                    generate_version(d, size, checksum)
-                )
+    highest_current_version = get_highest_version(published_versions)
+    new_version = ''
+
+    print(F'Current version: v{highest_current_version[0]}.{highest_current_version[1]}.{highest_current_version[2]}')
+    print(F'       1: Major Update: v{highest_current_version[0]+1}.0.0')
+    print(F'       2: Minor Update: v{highest_current_version[0]}.{highest_current_version[1]+1}.0')
+    print(F'      *3: Micro Update: v{highest_current_version[0]}.{highest_current_version[1]}.{highest_current_version[2]+1}')
+    print(F' <input>:  Text Update: v{highest_current_version[0]}.{highest_current_version[1]}.{highest_current_version[2]}_input')
+    level = input('Which version update applies? (3 is default) ')
+    if level == '1':
+        new_version = F'{highest_current_version[0]+1}.0.0'
+    elif level == '2':
+        new_version = F'{highest_current_version[0]}.{highest_current_version[1]+1}.0'
+    elif level == '3' or level == '':
+        new_version = F'{highest_current_version[0]}.{highest_current_version[1]}.{highest_current_version[2]+1}'
+    else:
+        level = level.lower()
+        level = level.replace(" ", "_")
+        new_version = F'{highest_current_version[0]}.{highest_current_version[1]}.{highest_current_version[2]}_{level}'
+
+
+
+
+
+    if not check_version_published(new_version, published_versions):
+        unpublished_versions = True
+        resp = input(F'Publish \'{new_version}\'? (Y/n) ''')
+        if resp is not 'n':
+            output_filename = F'./archives/EntalonCore-{new_version}'
+            shutil.make_archive(output_filename, 'zip', './src/')
+            size = os.path.getsize(output_filename+'.zip')
+            sha256_hash = hashlib.sha256()
+            with open(output_filename+'.zip', "rb") as f:
+                # Read and update hash string value in blocks of 4K
+                for byte_block in iter(lambda: f.read(4096), b""):
+                    sha256_hash.update(byte_block)
+                checksum = 'SHA-256:' + sha256_hash.hexdigest()
+            data['packages'][0]['platforms'].append(
+                generate_version(new_version, size, checksum)
+            )
+            print(F'Size:     {size}')
+            print(F'Checksum: {checksum}')
 
     if unpublished_versions is False:
         print('No versions to publish.')
@@ -45,12 +70,33 @@ def main():
             json.dump(data, write_file, indent=2)
 
 
+def major_minor_micro(version):
+    major, minor, micro = re.search('(\d+)\.(\d+)\.(\d+)', version).groups()
+
+    return int(major), int(minor), int(micro)
 
 def check_version_published(version, published_versions):
     for p in published_versions:
         if p == version:
             return True
     return False
+
+def get_highest_version(version_list):
+    published_versions_numeric = []
+    for v in version_list:
+        published_versions_numeric.append(major_minor_micro(v))
+
+    highest = (0, 0, 0)
+
+    for v in published_versions_numeric:
+        if v[0] == highest[0] and v[1] == highest[1] and v[2] > highest[2]:
+            highest = v
+        elif v[0] == highest[0] and v[1] > highest[1]:
+            highest = v
+        elif v[0] > highest[0]:
+            highest = v
+    
+    return highest
 
 
 def generate_version(version, size, checksum):

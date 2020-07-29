@@ -13,8 +13,8 @@
           "category": "Contributed",
           "url": "https://github.com/Entalon/EntalonCore/raw/master/archives/EntalonCore-0.1.0.zip",
           "archiveFileName": "EntalonCore-0.1.0.zip",
-          "checksum": "SHA-256:e9823f2e12acd582c26e67ff775fca16ef71ab7ab9677a399209df9fba1ce83f",
-          "size": "1897610",
+          "checksum": "SHA-256:946a23d7618e19253eb4dc7a2f74405610516a934c9d93d305b7da59133be354",
+          "size": "1896153",
           "boards": [
             {
               "name": "Entalon Core A M4 (SAMD51)"

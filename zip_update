@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+
+import json
+import os
+import shutil
+import hashlib
+
+package_file = 'package_entalon_index.json'
+
+def main():
+    dir_versions = next(os.walk('./versions/'))[1]
+    published_versions = []
+
+    with open(package_file) as json_file:
+        data = json.load(json_file)
+        for p in data['packages'][0]['platforms']:
+            published_versions.append(p['version'])
+
+
+    unpublished_versions = False
+
+    for d in dir_versions:
+        if not check_version_published(d, published_versions):
+            unpublished_versions = True
+            resp = input(F'Publish \'{d}\'? (Y/n) ''')
+            if resp is not 'n':
+                output_filename = F'./archives/EntalonCore-{d}'
+                dir_name = F'./versions/{d}/'
+                shutil.make_archive(output_filename, 'zip', dir_name)
+                size = os.path.getsize(output_filename+'.zip')
+                sha256_hash = hashlib.sha256()
+                with open(output_filename+'.zip', "rb") as f:
+                    # Read and update hash string value in blocks of 4K
+                    for byte_block in iter(lambda: f.read(4096), b""):
+                        sha256_hash.update(byte_block)
+                    checksum = 'SHA-256:' + sha256_hash.hexdigest()
+                data['packages'][0]['platforms'].append(
+                    generate_version(d, size, checksum)
+                )
+
+    if unpublished_versions is False:
+        print('No versions to publish.')
+    else:
+        with open(package_file, "w") as write_file:
+            json.dump(data, write_file, indent=2)
+
+
+
+def check_version_published(version, published_versions):
+    for p in published_versions:
+        if p == version:
+            return True
+    return False
+
+
+def generate_version(version, size, checksum):
+    basis = json.loads("""{
+        "name": "Entalon Core Boards",
+        "architecture": "samd",
+        "version": "",
+        "category": "Contributed",
+        "url": "",
+        "archiveFileName": "",
+        "checksum": "",
+        "size": "",
+        "boards": [
+            {
+                "name": "Entalon Core A M4 (SAMD51)"
+            }
+        ],
+        "toolsDependencies":
+        [
+            {
+                "packager": "arduino",
+                "name": "arm-none-eabi-gcc",
+                "version": "7-2017q4"
+            },
+            {
+                "packager": "arduino",
+                "name": "bossac",
+                "version": "1.8.0-48-gb176eee"
+            },
+            {
+                "packager": "arduino",
+                "name": "openocd",
+                "version": "0.10.0-arduino9"
+            },
+            {
+                "packager": "arduino",
+                "name": "CMSIS",
+                "version": "4.5.0"
+            },
+            {
+                "packager": "arduino",
+                "name": "CMSIS-Atmel",
+                "version": "1.2.0"
+            }
+        ]
+    }""")
+
+    basis['version'] = version
+    basis['url'] = F'https://github.com/Entalon/EntalonCore/raw/master/archives/EntalonCore-{version}.zip'
+    basis['archiveFileName'] = F'EntalonCore-{version}.zip'
+    basis['checksum'] = checksum
+    basis['size'] = F'{size}'
+
+    return basis
+
+    
+
+
+main()
+
+
+

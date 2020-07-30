@@ -17,10 +17,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if defined(BOARD_ID_METRO_M4)
-	#include "board_definitions_metro_m4.h"
-#elif defined(BOARD_ID_FEATHER_M4)
-	#include "board_definitions_feather_m4.h"
+#if defined(BOARD_ID_ENTALON_CORE_A_M4)
+#include "board_definitions_core_a_m4.h"
 #else
   #error You must define a BOARD_ID and add the corresponding definitions in board_definitions.h
 #endif

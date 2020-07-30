@@ -13,7 +13,7 @@ skip_count = 0
 build_format = '| {:22} | {:30} | {:9} '
 build_separator = '-' * 80
 
-default_boards = [ 'metro_m0', 'metro_m4', 'circuitplayground_m0']
+default_boards = [ 'core_a_m4']
 
 build_boards = []
 

@@ -23,10 +23,12 @@ ifeq ($(OS),Windows_NT)
     T=$(shell cygpath -u $(LOCALAPPDATA))
     MODULE_PATH?=$(T)/Arduino15/packages/arduino
     RM=rm
+    CP=cp
     SEP=/
   else
     MODULE_PATH?=$(LOCALAPPDATA)/Arduino15/packages/arduino
     RM=rm
+    CP=cp
     SEP=\\
   endif
 else
@@ -35,12 +37,14 @@ else
   ifeq ($(UNAME_S),Linux)
     MODULE_PATH?=$(HOME)/.arduino15/packages/arduino
     RM=rm
+    CP=cp
     SEP=/
   endif
 
   ifeq ($(UNAME_S),Darwin)
     MODULE_PATH?=$(HOME)/Library/Arduino15/packages/arduino/
     RM=rm
+    CP=cp
     SEP=/
   endif
 endif
@@ -70,7 +74,7 @@ BIN=$(BOARD_ID)_sam_ba.bin
 HEX=$(BOARD_ID)_sam_ba.hex
 
 
-INCLUDES=-I"$(MODULE_PATH)/tools/CMSIS/4.5.0/CMSIS/Include/" -I"$(MODULE_PATH)/tools/CMSIS-Atmel/1.1.0/CMSIS/Device/ATMEL/"
+INCLUDES=-I"$(MODULE_PATH)/tools/CMSIS/4.5.0/CMSIS/Include/" -I"$(MODULE_PATH)/tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL/"
 
 # -----------------------------------------------------------------------------
 # Linker options
@@ -111,6 +115,8 @@ $(ELF): Makefile $(BUILD_PATH) $(OBJECTS)
 	"$(CC)" -L. -L$(BUILD_PATH) $(LDFLAGS) -Os -Wl,--gc-sections -save-temps -Tbootloader_$(BOARD_ID).ld -Wl,-Map,"$(BUILD_PATH)/$(NAME).map" -o "$(BUILD_PATH)/$(ELF)" -Wl,--start-group $(OBJECTS) -lm -Wl,--end-group
 	"$(NM)" "$(BUILD_PATH)/$(ELF)" >"$(BUILD_PATH)/$(NAME)_symbols.txt"
 	"$(SIZE)" --format=sysv -t -x $(BUILD_PATH)/$(ELF)
+	"$(CP)" "$(BUILD_PATH)/$(ELF)" "$(ELF)"
+  
 
 $(BIN): $(ELF)
 	@echo ----------------------------------------------------------
@@ -138,10 +144,10 @@ print_info:
 	@echo Compiling bootloader using
 	@echo BASE PATH = $(MODULE_PATH)
 	@echo GCC  PATH = $(ARM_GCC_PATH)
-#	@echo OS        = $(OS)
-#	@echo SHELL     = $(SHELL)
-#	@echo TERM      = $(TERM)
-#	"$(CC)" -v
+	@echo OS        = $(OS)
+	@echo SHELL     = $(SHELL)
+	@echo TERM      = $(TERM)
+	"$(CC)" -v
 #	env
 
 copy_for_atmel_studio: $(BIN) $(HEX)
@@ -159,6 +165,7 @@ clean: $(AS_CLEAN)
 	@echo Cleaning project
 	-$(RM) $(BIN)
 	-$(RM) $(HEX)
+	-$(RM) $(ELF)
 	-$(RM) $(BUILD_PATH)/*.*
 	-rmdir $(BUILD_PATH)
 

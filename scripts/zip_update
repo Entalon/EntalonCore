@@ -6,7 +6,7 @@ import shutil
 import hashlib
 import re
 
-package_file = 'package_entalon_index.json'
+package_file = './package_entalon_index.json'
 
 def main():
 
@@ -47,11 +47,10 @@ def main():
     if not check_version_published(new_version, published_versions):
         unpublished_versions = True
         resp = input(F'Publish \'{new_version}\'? (Y/n) ''')
-        if resp is not 'n':
-
+        if resp != 'n':
             os.system('find ./src/ -name ".DS_Store" -delete')
 
-            output_filename = F'./archives/EntalonCore-{new_version}'
+            output_filename = F'.archives/EntalonCore-{new_version}'
             shutil.make_archive(output_filename, 'zip', './src/')
             size = os.path.getsize(output_filename+'.zip')
             sha256_hash = hashlib.sha256()

@@ -22,11 +22,12 @@
 /*
  * USB device definitions
  */
-#define STRING_PRODUCT "Metro M4"
-#define USB_VID_HIGH   0x23
-#define USB_VID_LOW    0x9A
+
+#define STRING_PRODUCT "Entalon Core A M4"
+#define USB_VID_HIGH   0x22
+#define USB_VID_LOW    0x68
 #define USB_PID_HIGH   0x00
-#define USB_PID_LOW    0x20
+#define USB_PID_LOW    0x01
 
 
 /*

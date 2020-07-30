@@ -1,0 +1,96 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+
+    //BOARD_ID=ENTALON_CORE_A_M4 BOARD_CHIP=__SAMD51J19A__ make clean all
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Bootloader Make",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "clean",
+                "all"
+            ],
+            "options": {
+                "cwd": "./src/core/bootloaders/entalon_core_m4/",
+                "env": {
+                    "BOARD_ID": "ENTALON_CORE_A_M4",
+                    "BOARD_CHIP": "__SAMD51J19A__"
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "showReuseMessage": false
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build Core Make",
+            "type": "shell",
+            "command": "echo Core",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "showReuseMessage": false
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build Bootloader",
+            "type": "shell",
+            "command": "echo Bootloader Build Complete!",
+            "group": "build",
+            "dependsOn": [
+                "Build Bootloader Make"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build Core",
+            "type": "shell",
+            "command": "echo Core Build Complete!",
+            "group": "build",
+            "dependsOn": [
+                "Build Core Make"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "Build All",
+            "dependsOrder": "sequence",
+            "type": "shell",
+            "command": "echo Build Complete!",
+            "group": "build",
+            "dependsOn": [
+                "Build Bootloader",
+                "Build Core"
+            ],
+            "presentation": {
+                "showReuseMessage": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ]
+}

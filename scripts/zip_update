@@ -50,7 +50,7 @@ def main():
         if resp != 'n':
             os.system('find ./src/ -name ".DS_Store" -delete')
 
-            output_filename = F'.archives/EntalonCore-{new_version}'
+            output_filename = F'./archives/EntalonCore-{new_version}'
             shutil.make_archive(output_filename, 'zip', './src/')
             size = os.path.getsize(output_filename+'.zip')
             sha256_hash = hashlib.sha256()
